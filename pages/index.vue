@@ -1,9 +1,12 @@
 <script setup>
-const correctWord = "charm";
+import { correctWords } from "../words.js";
+const correctWord =
+  correctWords[Math.floor(Math.random() * correctWords.length)].toLowerCase();
 const answer = useState("answer", () => "");
 const words = useState("words", () => []);
 const counter = useState("counter", () => 0);
 const gameWon = useState("gameWon", () => false);
+const gameLost = useState("gameLost", () => false);
 const keys = "qwertyuiopasdfghjklzxcvbnm";
 
 function handleClickLetter(letter) {
@@ -13,11 +16,16 @@ function handleClickLetter(letter) {
     }
     if (answer.value.length === 5) {
       words.value.push(answer.value);
-      console.log(words.value);
       answer.value = "";
       counter.value++;
     }
   }
+}
+onMounted(() => console.log(correctWord));
+function closeVictoryModal() {
+  gameWon.value = false;
+  gameLost.value = false;
+  window.location.reload();
 }
 function styles(counter, index) {
   const includes =
@@ -41,13 +49,11 @@ function styles(counter, index) {
   ];
 }
 watch(words.value, async () => {
-  console.log(words.value[counter.value - 1]);
   if (words.value[counter.value - 1] === correctWord) {
     gameWon.value = true;
-    setTimeout(() => alert("You Won!"), 50);
   }
   if (words.value.length >= 6 && !gameWon) {
-    setTimeout(() => alert("You Lost!"), 100);
+    gameLost.value = true;
   }
 });
 function startOver() {
@@ -70,7 +76,7 @@ p {
     >
       <p class="font-bold text-3xl uppercase tracking-widest">Wordle</p>
     </nav>
-    <main class="mt-16">
+    <main class="mt-16" :class="{ 'blur-[2px] pointer-events-none': gameWon }">
       <div class="flex flex-wrap w-[400px] m-auto gap-4 justify-center">
         <div
           class="w-16 h-16 flex items-center rounded-lg border"
@@ -83,70 +89,24 @@ p {
             {{ words[0] ? words[0][index] : answer[index] }}
           </p>
         </div>
-        <div
-          class="w-16 h-16 flex items-center rounded-lg border"
-          v-for="(box, index) in 5"
-        >
-          <p
-            class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
-            :class="styles(1, index)"
+        <div v-for="row in 4" class="flex gap-4">
+          <div
+            class="w-16 h-16 flex items-center rounded-lg border"
+            v-for="(box, index) in 5"
           >
-            {{
-              words[1] ? words[1][index] : counter === 1 ? answer[index] : ""
-            }}
-          </p>
-        </div>
-        <div
-          class="w-16 h-16 flex items-center rounded-lg border"
-          v-for="(box, index) in 5"
-        >
-          <p
-            class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
-            :class="styles(2, index)"
-          >
-            {{
-              words[2] ? words[2][index] : counter === 2 ? answer[index] : ""
-            }}
-          </p>
-        </div>
-        <div
-          class="w-16 h-16 flex items-center rounded-lg border"
-          v-for="(box, index) in 5"
-        >
-          <p
-            class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
-            :class="styles(3, index)"
-          >
-            {{
-              words[3] ? words[3][index] : counter === 3 ? answer[index] : ""
-            }}
-          </p>
-        </div>
-        <div
-          class="w-16 h-16 flex items-center rounded-lg border"
-          v-for="(box, index) in 5"
-        >
-          <p
-            class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
-            :class="styles(4, index)"
-          >
-            {{
-              words[4] ? words[4][index] : counter === 4 ? answer[index] : ""
-            }}
-          </p>
-        </div>
-        <div
-          class="w-16 h-16 flex items-center rounded-lg border"
-          v-for="(box, index) in 5"
-        >
-          <p
-            class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
-            :class="styles(5, index)"
-          >
-            {{
-              words[5] ? words[5][index] : counter === 5 ? answer[index] : ""
-            }}
-          </p>
+            <p
+              class="w-full h-full text-4xl font-black uppercase text-center pt-2 text-white rounded-lg border-2 border-gray-900"
+              :class="styles(row, index)"
+            >
+              {{
+                words[row]
+                  ? words[row][index]
+                  : counter === row
+                  ? answer[index]
+                  : ""
+              }}
+            </p>
+          </div>
         </div>
       </div>
       <div class="w-[700px] m-auto mt-28 flex flex-wrap justify-center">
@@ -169,9 +129,21 @@ p {
       <button
         class="absolute top-2 left-4 h-4 border-x-2 border-gray-600 rounded-lg p-6 items-center flex text-2xl"
         @click="startOver"
+        v-if="!gameWon"
       >
         Retry
       </button>
     </main>
+    <GameOver
+      :onReplayClick="closeVictoryModal"
+      winMessage="You Won!"
+      v-if="gameWon"
+    />
+    <GameOver
+      :onReplayClick="closeVictoryModal"
+      loseMessage="You Lost!"
+      defaultMessage="Game Over"
+      v-if="gameLost"
+    />
   </section>
 </template>
