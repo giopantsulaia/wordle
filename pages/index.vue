@@ -52,7 +52,7 @@ watch(words.value, async () => {
   if (words.value[counter.value - 1] === correctWord) {
     gameWon.value = true;
   }
-  if (words.value.length >= 6 && !gameWon) {
+  if (words.value.length >= 6 && !gameWon.value) {
     gameLost.value = true;
   }
 });
@@ -63,20 +63,33 @@ function deleteLetter() {
   answer.value = answer.value.slice(0, -1);
 }
 </script>
-<style scoped>
-p {
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
-}
-</style>
 <template>
   <section>
     <nav
       class="relative top-0 left-0 w-screen border-b-2 border-black h-16 flex justify-center items-center"
     >
-      <p class="font-bold text-3xl uppercase tracking-widest">Wordle</p>
+      <button
+        class="absolute top-2 left-4 h-4 border-x border-opacity-40 border-gray-600 p-6 items-center flex text-2xl"
+        @click="startOver"
+        v-if="!gameWon"
+      >
+        Retry
+      </button>
+      <p
+        class="font-medium text-4xl uppercase text-white mx-1 w-12 h-12 flex"
+        v-for="letter in 'wordle'"
+      >
+        <span
+          class="bg-green-600 w-full rounded-lg border-2 border-gray-700 text-center"
+        >
+          {{ letter }}
+        </span>
+      </p>
     </nav>
-    <main class="mt-16" :class="{ 'blur-[2px] pointer-events-none': gameWon }">
+    <main
+      class="mt-16"
+      :class="{ 'blur-[2px] pointer-events-none': gameWon || gameLost }"
+    >
       <div class="flex flex-wrap w-[400px] m-auto gap-4 justify-center">
         <div
           class="w-16 h-16 flex items-center rounded-lg border"
@@ -89,7 +102,7 @@ p {
             {{ words[0] ? words[0][index] : answer[index] }}
           </p>
         </div>
-        <div v-for="row in 4" class="flex gap-4">
+        <div v-for="row in 5" class="flex gap-4">
           <div
             class="w-16 h-16 flex items-center rounded-lg border"
             v-for="(box, index) in 5"
@@ -126,13 +139,6 @@ p {
           ⌫
         </button>
       </div>
-      <button
-        class="absolute top-2 left-4 h-4 border-x-2 border-gray-600 rounded-lg p-6 items-center flex text-2xl"
-        @click="startOver"
-        v-if="!gameWon"
-      >
-        Retry
-      </button>
     </main>
     <GameOver
       :onReplayClick="closeVictoryModal"
@@ -147,3 +153,9 @@ p {
     />
   </section>
 </template>
+<style scoped>
+p {
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+</style>

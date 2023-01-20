@@ -9,7 +9,8 @@
       >
     </p>
 
-    <VictoryIcon />
+    <VictoryIcon v-if="winMessage" />
+    <p v-else class="text-7xl my-8">🫢</p>
     <button
       class="bg-yellow-400 mt-6 w-28 p-2 rounded-lg border border-gray-300"
       @click="$emit('replayClick')"
