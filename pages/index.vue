@@ -15,18 +15,29 @@ function handleClickLetter(letter) {
       answer.value += letter;
     }
     if (answer.value.length === 5) {
-      words.value.push(answer.value);
-      answer.value = "";
-      counter.value++;
+      resetAnswer();
     }
   }
 }
-onMounted(() => console.log(correctWord));
+
+function resetAnswer() {
+  const isValidWord = correctWords.includes(
+    answer.value.charAt(0).toUpperCase() + answer.value.slice(1)
+  );
+  if (isValidWord) {
+    words.value.push(answer.value);
+    answer.value = "";
+    counter.value++;
+  }
+  answer.value = "";
+}
+
 function closeVictoryModal() {
   gameWon.value = false;
   gameLost.value = false;
   window.location.reload();
 }
+
 function styles(counter, index) {
   const includes =
     words.value.length > counter &&
