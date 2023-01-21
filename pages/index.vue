@@ -15,7 +15,9 @@ function handleClickLetter(letter) {
       answer.value += letter;
     }
     if (answer.value.length === 5) {
-      resetAnswer();
+      setTimeout(() => {
+        resetAnswer();
+      }, 200);
     }
   }
 }
