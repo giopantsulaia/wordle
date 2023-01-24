@@ -61,6 +61,13 @@ function styles(counter, index) {
     { "text-gray-700": !words.value[counter] },
   ];
 }
+
+function onKeydown(event) {
+  console.log(event.key);
+  if (keys.includes(event.key)) handleClickLetter(event.key);
+  if (event.key === "Backspace") deleteLetter();
+}
+
 watch(words.value, async () => {
   if (words.value[counter.value - 1] === correctWord) {
     gameWon.value = true;
@@ -75,6 +82,10 @@ function startOver() {
 function deleteLetter() {
   answer.value = answer.value.slice(0, -1);
 }
+
+onMounted(() => {
+  document.addEventListener("keydown", onKeydown);
+});
 </script>
 <template>
   <section>
