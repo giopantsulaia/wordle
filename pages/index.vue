@@ -8,6 +8,12 @@ const counter = useState("counter", () => 0);
 const gameWon = useState("gameWon", () => false);
 const gameLost = useState("gameLost", () => false);
 const keys = "qwertyuiopasdfghjklzxcvbnm";
+const darkTheme = useState("darkTheme", () => false);
+
+function changeTheme() {
+  darkTheme.value = !darkTheme.value;
+  console.log(darkTheme);
+}
 
 function handleClickLetter(letter) {
   if (!gameWon.value) {
@@ -88,19 +94,21 @@ onMounted(() => {
 });
 </script>
 <template>
-  <section>
+  <section class="h-screen" :class="{ 'bg-[#2f3136]': darkTheme }">
     <nav
       class="relative top-0 left-0 w-screen border-b-2 border-black h-16 flex justify-center items-center"
+      :class="{ 'text-white': darkTheme }"
     >
       <button
         class="absolute top-2 left-4 h-4 border-x border-opacity-40 border-gray-600 p-6 items-center flex text-2xl"
         @click="startOver"
         v-if="!gameWon"
+        tabindex="-1"
       >
         Retry
       </button>
       <p
-        class="font-medium text-4xl uppercase text-white mx-1 w-12 h-12 flex"
+        class="font-medium text-4xl uppercase text-white mx-1 w-12 h-12 flex cursor-default select-none"
         v-for="letter in 'wordle'"
       >
         <span
@@ -109,6 +117,12 @@ onMounted(() => {
           {{ letter }}
         </span>
       </p>
+      <button class="absolute right-10" @click="changeTheme">
+        Theme:
+        <span class="font-semibold tracking-widest">{{
+          darkTheme ? "Dark" : "Light"
+        }}</span>
+      </button>
     </nav>
     <main
       class="mt-16"
@@ -146,7 +160,10 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="w-[700px] m-auto mt-28 flex flex-wrap justify-center">
+      <div
+        class="w-[700px] m-auto mt-28 flex flex-wrap justify-center select-none"
+        :class="{ 'text-white': darkTheme }"
+      >
         <button
           v-for="letter in keys"
           :key="letter"

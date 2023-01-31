@@ -1,10 +1,9 @@
 <template>
   <div>
-    <RouterView/>
+    <RouterView />
   </div>
 </template>
 <style>
 body {
-  background-color: #ffffff;
 }
 </style>
