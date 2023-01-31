@@ -12,7 +12,7 @@ const darkTheme = useState("darkTheme", () => false);
 
 function changeTheme() {
   darkTheme.value = !darkTheme.value;
-  console.log(darkTheme);
+  localStorage.setItem("bg-dark", darkTheme.value);
 }
 
 function handleClickLetter(letter) {
@@ -91,6 +91,7 @@ function deleteLetter() {
 
 onMounted(() => {
   document.addEventListener("keydown", onKeydown);
+  darkTheme.value = localStorage.getItem("bg-dark") === "true";
 });
 </script>
 <template>
