@@ -69,7 +69,6 @@ function styles(counter, index) {
 }
 
 function onKeydown(event) {
-  console.log(event.key);
   if (keys.includes(event.key)) handleClickLetter(event.key);
   if (event.key === "Backspace") deleteLetter();
 }
