@@ -71,6 +71,8 @@ function styles(counter, index) {
 function onKeydown(event) {
   if (keys.includes(event.key)) handleClickLetter(event.key);
   if (event.key === "Backspace") deleteLetter();
+
+  console.log(123);
 }
 
 watch(words.value, async () => {
